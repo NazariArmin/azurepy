@@ -116,6 +116,14 @@ class AzurePipline(AzureBase):
         self.azure_project = azure_project
         self.endpoint = f"{self.azure_project.endpoint}/pipelines/{self.id}"
 
+    def trigger(self):
+        url = f"{self.endpoint}/runs?api-version=6.0-preview.1"
+        body = {
+            "previewRun": False,
+        }
+        response = self.azure_endpoints.post(url, json=body).json()
+        return response
+
     @property
     def runs(self):
         url = f"{self.endpoint}/runs?api-version=6.0-preview.1"
@@ -132,6 +140,7 @@ class AzurePiplineRun(AzureBase):
     def __init__(self, id, azure_pipline, **kwargs) -> None:
         super(AzurePiplineRun, self).__init__(azure_auth=azure_pipline.azure_auth)
         self.id = id
+        self.result = kwargs.get('result')
         self.metadata = kwargs
         self.azure_pipline = azure_pipline
         self.endpoint = f"{self.azure_pipline.endpoint}/runs/{self.id}"

@@ -1,0 +1,23 @@
+from azure import AzureProject, AzureAuth
+
+
+#CreatePipline Configuration
+team_project="TeamProject"
+access_token="AccessToken"
+username="Optional"
+
+
+
+project = AzureProject(
+    project=team_project,
+    azure_auth=AzureAuth(
+        username=username,
+        access_token=access_token
+    )
+)
+
+# Trigger piplines that fails for last run
+for pipline in project.piplines:
+    if pipline.runs and pipline.runs[0].result == 'failed':
+        pipline.trigger()
+        print(pipline.name, " triggered")
